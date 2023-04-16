@@ -2,7 +2,7 @@ import _ from "lodash";
 import { Database } from "../src/database";
 import { selectRowById } from "../src/queries/select";
 import { minutes } from "./utils";
-import { CATEGORIES, PRICING_PLANS, APPS } from "../src/shopify-table-names";
+import { CATEGORIES, PRICING_PLANS, APPS, APPS_CATEGORIES, APPS_PRICING_PLANS, KEY_BENEFITS, REVIEWS } from "../src/shopify-table-names";
 
 describe("Foreign Keys", () => {
     let db: Database;
@@ -14,7 +14,7 @@ describe("Foreign Keys", () => {
 
     it("should not be able to delete category if any app is linked", async done => {
         const categoryId = 6;
-        const query = `todo`;
+        const query = `DELETE FROM ${CATEGORIES} WHERE category_id = ${categoryId}`;
         try {
             await db.delete(query);
           } catch (e) {}
@@ -27,7 +27,7 @@ describe("Foreign Keys", () => {
 
     it("should not be able to delete pricing plan if any app is linked", async done => {
         const pricingPlanId = 100;
-        const query = `todo`;
+        const query = `DELETE FROM ${PRICING_PLANS} WHERE pricing_plan_id = ${pricingPlanId}`;
 
         try {
             await db.delete(query);
@@ -41,7 +41,7 @@ describe("Foreign Keys", () => {
 
     it("should not be able to delete app if any data is linked", async done => {
         const appId = 245;
-        const query = `todo`;
+        const query = `DELETE FROM ${APPS} WHERE app_id = ${appId}`;
 
         try {
             await db.delete(query);
@@ -55,7 +55,11 @@ describe("Foreign Keys", () => {
 
     it("should be able to delete app", async done => {
         const appId = 355;
-        const query = `todo`;
+        const query = `DELETE FROM ${APPS} WHERE id = ${appId};
+        DELETE FROM ${APPS_CATEGORIES} WHERE app_id = ${appId};
+        DELETE FROM ${APPS_PRICING_PLANS} WHERE app_id = ${appId};
+        DELETE FROM ${KEY_BENEFITS} WHERE app_id = ${appId};
+        DELETE FROM ${REVIEWS} WHERE app_id = ${appId}`;
         try {
             await db.delete(query);
           } catch (e) {}
